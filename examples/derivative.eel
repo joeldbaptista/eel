@@ -1,0 +1,18 @@
+
+derivative(f, dx) 
+{
+    return (x) { 
+        return (f(x + dx) - f(x)) / dx; 
+    };
+}
+
+main()
+{ 
+    /* calculation of derivatives using closure */
+    let eps = 1e-10;
+    let f = (x){ return x**2; };
+    let df = derivative(f, eps);
+
+    print("df(2.0) = %s", df(2.0)); /* should be ~2.0*x */
+    print("df(4.0) = %s", df(4.0));
+}

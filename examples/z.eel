@@ -1,0 +1,18 @@
+/*
+    Source: https://realpython.com/mandelbrot-set-python/ 
+*/
+z(n, c) {
+    if (n == 0) {
+        return 0;
+    }
+    return z(n-1, c)**2 + c;
+}
+
+main()
+{
+    let c = 1;
+
+    for (let k=0; k < 10; ++k) {
+        print("z(%s, %s) = %s", k, c, z(k, c));
+    }
+}

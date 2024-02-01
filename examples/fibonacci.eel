@@ -1,0 +1,11 @@
+/*
+    The n-th Fibonacci calculation (recursive version)
+*/
+fibo(n) {
+    if (n < 2) return n;
+    return fibo(n-1) + fibo(n-2);
+}
+
+main() {
+    print("the 20-th fibonacci term: %s", fibo(20));
+}

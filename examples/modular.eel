@@ -1,0 +1,20 @@
+
+modular(n)
+{
+    let r = (a, b) {
+        return (a - b) % n;
+    };
+    return r;
+}
+
+main()
+{
+    /* closure examples */
+    let m3 = modular(3);
+    let m5 = modular(5);
+    let m7 = modular(7);
+
+    print("m3(20, 15) = %s", m3(20, 15));
+    print("m5(20, 15) = %s", m5(20, 15));
+    print("m7(20, 15) = %s", m7(20, 15));
+}

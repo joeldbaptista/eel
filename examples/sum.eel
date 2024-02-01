@@ -1,0 +1,16 @@
+sum(n) 
+{
+    /*
+        Summation of all integers in [0, n[
+    */
+    let s = 0;
+    for (let k=0; k < n; ++k) {
+        s += k;
+    }
+    return s;
+}
+
+main()
+{
+    print("sum(10000) = %s", sum(10000));
+}

@@ -1,0 +1,44 @@
+
+swap(a, i, j)
+{
+	let t = a[i];
+	a[i] = a[j];
+	a[j] = t;
+}
+
+partition(a, l, h)
+{
+	let p = a[h];
+	
+	let i = l - 1;	
+	for (let k=l; k <= h; ++k) {
+		if (a[k] < p) {
+			++i; 
+			swap(a, i, k);
+		}	
+	}
+	swap(a, i+1, h);
+	return i + 1;
+}
+
+qsort(a, l, h)
+{
+	if (l < h) {
+		let p = partition(a, l, h);
+		qsort(a, l, p-1);
+		qsort(a, p+1, h);
+	}
+}
+
+main()
+{
+	let a = [10, 7, 90, 8, 1, 2, 100, 5, 0, -1, 80, 9];
+	let n = #a;
+
+	qsort(a, 0, n-1);
+	for (let k=0; k < n; ++k) {
+		print("a[%s] = %s", k, a[k]);
+	}
+}
+
+

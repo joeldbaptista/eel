@@ -1,0 +1,16 @@
+/*
+    The summation of the squares of all odd numbers up to N;
+    using the operator bit-and
+*/
+sqo(N) {
+    let s = 0;
+    for (let k=0; k < N; ++k) {
+        if (k & 1)
+            s += k**2;
+    }
+    return s;
+}
+
+main() {
+    print("sqo(1000) = %s", sqo(1000));
+}

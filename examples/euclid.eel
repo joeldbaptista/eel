@@ -1,0 +1,17 @@
+/*
+        Euclidean algorithm to find the GCD
+*/
+gcd(a, b) {
+    while (b != 0) {
+        let t = b;
+        b = a % b;
+        a = t;
+    }
+    return a;
+}
+
+main() {
+    let a = 1071, b = 462;
+    let g = gcd(1071, 462);
+    print("gcd(%s, %s) = %s", a, b, g);
+}
