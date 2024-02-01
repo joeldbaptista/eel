@@ -29,12 +29,30 @@ $ lua eel.lua examples/<example>.eel
 
 ## Syntax and features
 
-#### Syntax
+#### General view and syntax
 
 Syntax is similar to that of C, and other C-family members. So expressions like `++x` or `y += x` are expected. 
-The operators also behave like those of C, including the bitwise operators.
+The operators also behave like those of C, including the bitwise operators. So expressions as those that follow are supported:
 
-Control structures are also similar, for example:
+```Javascript
+
+2 ** 10 // power operator
+
+1 >> 2  // right shift
+1 << 2  // left shift
+2 | 7   // bitwise or
+2 & 7   // bitwise and
+~2      // bitwise not
+
+x == 1 && y > 10    // boolean and
+x != 1 || y >= 10   // boolean or
+!(x == 1)           // boolean not
+```
+
+A word about prefix/postfix notation. The operator `++` and `--` work as in C, that is: `foo(++x)` will increment `x` and apply `foo`
+over the incremented `x`; but `foo(x++)` will apply `foo` over `x`, and only then increment `x`.
+
+Control structures are also similar to those of C, for example:
 
 ```Javascript
 
@@ -65,9 +83,33 @@ while (true) {
 }
 ```
 
-Like C, `eel` also supports `break` and `continue`.
+Like C, `eel` also supports `break` and `continue`. Thus, the following example will just add up to `k == 5`:
 
-There are however differences. The most noticible is the power operator `**`. For example, `x**2` will square `x`. 
+```Javascript
+
+// code ommitted
+
+for (k = 0; k < 10; ++k) {
+    if (k > 5) break;
+    s += k**2;
+}
+
+```
+
+And the next example will just add even numbers:
+
+```Javascript
+
+// code ommitted
+
+for (k = 0; k < 10; ++k) {
+    if (k & 1) continue;
+    s += k;
+}
+
+```
+
+There are however differences. The most noticibly is the power operator `**`. For example, `x**2` will square `x`. 
 The switch control structure is also slightly different. For example:
 
 ```Javascript
@@ -86,6 +128,18 @@ default:
 ```
 The switch-case control structures does not require break. The moment a case is matched, the body of the case is executed,
 and once it gets to the end of the case, it will terminate the switch-case. If neither cases match, the default will be run. 
+If no default exists, the switch terminates. 
+
+Like C, Strings are defined using double quotes only, but single quotes are not recognized in the current version of the language, 
+for example:
+
+```
+if (n & 1) {
+    print("Hello there %s! You're odd!", n);
+}
+
+print('This is an error; there are not single-quotes in eel');
+```
 
 #### Comments
 
@@ -111,7 +165,7 @@ All variables have to be declared; the expression with an undeclared variable wi
 Declaration is done using the keywords `let` or `const`. By the declaring a variable as `const` we are imposing a read-only
 constraint. The use of a `const` variable as left-hand side in an assignment statement yields a compilation error. 
 
-Declarations can be simple, where only the qualifier (`let` or `const`) and the name of the variable is used; or compose, 
+Declarations can be simple, where only the qualifier (`let` or `const`) and the name of the variable is used; or composite, 
 where the qualifier, the name and an expression for assignment is used. Examples;
 
 ```Javascript
@@ -124,12 +178,7 @@ const zero;      // always zero
 A variable simply declared (i.e. without assignment) will have default value value zero. **Note** if a constant is
 simply declared, that variable will be always zero (last declaration in the example)
 
-#### Numbers, strings and operators
-
-#### Control structures and blocks
-
 #### Lists and arrays
-
 
 ### Features
 
@@ -145,6 +194,7 @@ simply declared, that variable will be always zero (last declaration in the exam
 
 #### Function values (`funval`)
 
+## Implementation details
 
 ## Future work
 
