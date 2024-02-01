@@ -58,6 +58,13 @@ x != 1 || y >= 10   // boolean or
 A word about prefix/postfix notation. The operator `++` and `--` work as in C, that is: `foo(++x)` will increment `x` and apply `foo`
 over the incremented `x`; but `foo(x++)` will apply `foo` over `x`, and only then increment `x`.
 
+Similarly to C and Javascript, the ternary operator works as expected; next snippeted exemplifies:
+
+```Javascript
+let x = -42;
+print("x = %s", x > 0? 10: -10);
+```
+
 Control structures are also similar to those of C, for example:
 
 ```Javascript
