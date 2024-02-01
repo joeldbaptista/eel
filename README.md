@@ -36,13 +36,15 @@ $ lua eel.lua examples/<example>.eel
 A script in `eel.` is a list of functions, where one has to be named `main`, containing no argumments.
 
 Syntax is similar to that of C, and other C-family members. So expressions like `++x` or `y += x` are expected. 
-The operators also behave like those of C, including the bitwise operators that have the same precedence rules as in C. 
+The operators also behave like those of C, including the bitwise operators and module that have the same precedence 
+rules as in C. 
 
 So expressions as those that follow are supported:
 
 ```Javascript
 
 2 ** 10 // power operator
+10 % 10 // modulo operator
 
 1 >> 2  // right shift
 1 << 2  // left shift
@@ -53,6 +55,14 @@ So expressions as those that follow are supported:
 x == 1 && y > 10    // boolean and
 x != 1 || y >= 10   // boolean or
 !(x == 1)           // boolean not
+```
+
+The boolean operators operate in short-circuit; thus, in the following example, the calculate `1/x` is not performed:
+
+```javascript
+let x = 0;
+print("Will this crash?", x != 0 && 1/x);
+
 ```
 
 A word about prefix/postfix notation. The operator `++` and `--` work as in C, that is: `foo(++x)` will increment `x` and apply `foo`
@@ -122,7 +132,23 @@ for (k = 0; k < 10; ++k) {
 
 ```
 
-There are however differences. The most noticibly is the power operator `**`. For example, `x**2` will square `x`. 
+There are however differences. The most noticibly is `unless` control structure, that does not exist in the C family. 
+An example of use:
+
+```javascript
+
+let x == 0;
+
+unless (x == 0) {
+    print("x != 0");
+} else {
+    print("x == 0");   // it will print this one
+}
+
+```
+
+The power operator, `**`, is another difference in comparison with C-like languages. For example, `x**2` will square `x`. 
+
 The switch control structure is also slightly different. For example:
 
 ```Javascript
@@ -142,6 +168,7 @@ default:
 The switch-case control structures does not require break. The moment a case is matched, the body of the case is executed,
 and once it gets to the end of the case, it will terminate the switch-case. If neither cases match, the default will be run. 
 If no default exists, the switch terminates. 
+
 
 Like C, Strings are defined using double quotes only, but single quotes are not recognized in the current version of the language, 
 for example:
@@ -371,7 +398,7 @@ main()
 
 ## Future work
 
-Due to time availability I was not able to implement the following features that I wished:
+Due to time unavailability I was not able to implement the following features that I wished:
 
 1. Hashmaps / dictionaries
 2. Function overload
@@ -380,4 +407,9 @@ Due to time availability I was not able to implement the following features that
 
 ## Self assessment
 
-TODO
+| Language criteria             | Score      | Comment
+|-------------------------------|------------|------------
+| Language Completeness | 3 | More then one challenge implemented                                                                       |
+| Code Quality & Report | 3 | Code is organized in components for modular development                                                   |
+| Originality & Scope   | 3 | The current implementation deviates from Selene, and combines functional & procedural paradigms           |
+| Self assesment        | 2 | I feel like the conceptual aspects of PEGs is not yet solidified in my mind                               |
