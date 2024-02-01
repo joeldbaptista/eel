@@ -1,4 +1,6 @@
-
+/*
+    Quicksort example
+*/
 swap(a, i, j)
 {
 	let t = a[i];
