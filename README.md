@@ -240,7 +240,7 @@ print("the length of r is %s", #r);  // yield "Variable `r` is read-only"
 
 If the size is not determined in a 1D array (a list), that structure can grow indefinitely. For example:
 
-```
+```javascript
 let r = [];
 for (let k=0; k < 100; ++k)
     r[k] = k**2;
