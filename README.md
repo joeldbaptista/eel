@@ -22,6 +22,15 @@ In particular:
 10. `squares.eel` -- example of a simple sum using arrays
 11. `sum.eel` -- example of a simple for loop
 12. `z.eel` -- example of Mandelbrot numbers
+13. `bools.eel` -- example of short-circuit boolean operators
+14. `break.eel` -- example of how `break` works
+15. `const.eel` -- example of `const` works (will issue an error on purpose)
+16. `continue.eel` -- example of how `continue` works
+17. `lambda_scope.eel` -- example of how scopes behave with lambdas (will issue an error on purpose)
+18. `pfix.eel` -- example how prefix/postfix operator works
+19. `redeclaration.eel` -- example of redeclaration error (will issue an error on purpose)
+20. `switch.eel` -- example of switch works in `eel` 
+21. `undeclared.eel` -- example of undeclared variable error (will issue an error on purpose)
 
 To run an example, do:
 
@@ -57,16 +66,11 @@ x != 1 || y >= 10   // boolean or
 !(x == 1)           // boolean not
 ```
 
-The boolean operators operate in short-circuit; thus, in the following example, `1/x` is not calculated:
-
-```javascript
-let x = 0;
-print("Will this crash?", x != 0 && 1/x);
-
-```
+The boolean operators operate in short-circuit. Check `examples/bools.eel` to demonstrate short-circuit effect.
 
 A word about prefix/postfix notation. The operator `++` and `--` work as in C, that is: `foo(++x)` will increment `x` and apply `foo`
-over the incremented `x`; but `foo(x++)` will apply `foo` over `x`, and only then increment `x`.
+over the incremented `x`; but `foo(x++)` will apply `foo` over `x`, and only then increment `x`. Check `examples/pfix.eel` to
+demonstrate that.
 
 Similarly to C and Javascript, the ternary operator works as expected; next snippet exemplifies:
 
@@ -222,7 +226,7 @@ Comments in `eel` are similar to C99. That is:
 
 ```
 
-### Declaration statments
+### Declaration statements
 
 All variables have to be declared; the expression with an undeclared variable will yield a compilation error.
 
@@ -240,7 +244,18 @@ const zero;      // always zero
 ```
 
 A variable simply declared (i.e. without assignment) will have default value value zero. **Note** if a constant is
-simply declared, that variable will be always zero (last declaration in the example)
+simply declared, that variable will be always zero (last declaration in the example).
+
+Similarly to C and other C-like languages, declarations can be done in sequence, that is, separated by `,`. 
+For example:
+
+```javascript
+let a, b = 10, c; // declares threee variables a, b, c
+const aa = 10, bb = 20, cc = 30; // declares three constants aa, bb, cc
+```
+
+**Note** Because all variable have to be declared, all code lives inside a function, all variables are
+local to a particular function scope. Thus, all variables live in the stack.
 
 ### Arrays and lists
 
@@ -340,8 +355,8 @@ main() {
 }
 ```
 
-The current implementation allows recursion, without forward declaration; the examples `factorial.eel` and `fibonacci.eel` 
-show how recursion is used in `eel`; for `fibonacci.eel`:
+The current implementation allows recursion, as exemplified in the examples `factorial.eel` and `fibonacci.eel`.
+The next snippet is extracted from `fibonacci.eel`:
 
 ```javascript
 fibo(n) {
@@ -353,8 +368,6 @@ main() {
     print("the 20-th fibonacci term: %s", fibo(20));
 }
 ```
-
-TODO -- explain implementation.
 
 ### Function values (`funval`)
 
@@ -382,8 +395,11 @@ main()
 }
 ```
 
-TODO -- explain how this was implemented
-
+Closures need to bring the context where they have been created. This was implemented using a extra instruction, `scntx` 
+(store context) and `lcntx` (load context). These functions are responsible to save the context variables in a section
+of a lua table (`cntx`). These variables are extracted by traversing the parent AST searching to utilised variables
+in the body of the closure function. Next, instruction `fnld` loads the function to the stack in preparation for `fcall`
+that runs the code of the function.
 
 ## Scopes
 
@@ -442,12 +458,13 @@ Due to time unavailability I was not able to implement the following features th
 2. Function overload
 3. String manipulation
 4. Better error messages
+5. Unit testing for each feature of the language
 
 ## Self assessment
 
 | Language criteria             | Score      | Comment
 |-------------------------------|------------|------------
-| Language Completeness | 3 | More then one challenge implemented                                                                       |
-| Code Quality & Report | 3 | Code is organized in components for modular development                                                   |
-| Originality & Scope   | 3 | The current implementation deviates from Selene, and combines functional & procedural paradigms           |
-| Self assesment        | 2 | I feel the conceptual aspects of PEGs is not yet solidified in my mind                               |
+| Language Completeness | 3 | More then one challenge implemented                                                                          |
+| Code Quality & Report | 3 | Code is organized in components for modular development                                                      |
+| Originality & Scope   | 3 | The current implementation deviates considerably from Selene, and combines functional & procedural paradigms |
+| Self assesment        | 2 | I feel the conceptual aspects of PEGs is not yet solidified in my mind                                       |

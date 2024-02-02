@@ -1,0 +1,19 @@
+
+main()
+{
+	let x = 1, y = 2;
+
+	print("x == 1 && y == 2 (%s)", x == 1 && y == 2);
+	print("x == 1 && y != 2 (%s)", x == 1 && y != 2);
+	print("x != 1 && y == 2 (%s)", x != 1 && y == 2);
+	print("x != 1 && y != 2 (%s)", x != 1 && y != 2);
+
+	print("x == 1 || y == 2 (%s)", x == 1 || y != 2);
+	print("x != 1 || y == 2 (%s)", x != 1 || y == 2);
+	print("x == 1 || y != 2 (%s)", x == 1 || y != 2);
+	print("x != 1 || y != 2 (%s)", x != 1 || y != 2);
+
+	/* No errors will be issue due to division by zero */
+	print("0 && 1/0", 0 && 1/0);
+	print("1 || 1/0", 1 || 1/0);
+}

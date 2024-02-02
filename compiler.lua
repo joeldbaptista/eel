@@ -371,10 +371,27 @@ function compiler:cexpr(ast)
         return
     end
     if ast.tag == "binop" then
-        self:cexpr(ast.lop)
-        self:cexpr(ast.rop)
-        self:addop(bops[ast.op])
-        return
+		-- logic `and` implementation with jumps
+		if bops[ast.op] == "land" then
+			self:cexpr(ast.lop)
+			local jmp = self:jmpfwd("jzp")
+			self:cexpr(ast.rop)
+			self:jmphere(jmp)
+			return
+		end
+		-- logic `or` implementation with jumps
+		if bops[ast.op] == "lor" then
+			self:cexpr(ast.lop)
+			local jmp = self:jmpfwd("jznp")
+			self:cexpr(ast.rop)
+			self:jmphere(jmp)
+			return
+		end 
+		-- here we're leveraging lua's operators
+		self:cexpr(ast.lop)
+		self:cexpr(ast.rop)
+		self:addop(bops[ast.op])
+		return
     end
     if ast.tag == "unop" then
         self:cexpr(ast.exp)
