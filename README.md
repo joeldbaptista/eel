@@ -71,7 +71,7 @@ The boolean operators operate in short-circuit. Check `examples/bools.eel` to de
 
 A word about prefix/postfix notation. The operator `++` and `--` work as in C, that is: `foo(++x)` will increment `x` and apply `foo`
 over the incremented `x`; but `foo(x++)` will apply `foo` over `x`, and only then increment `x`. Check `examples/pfix.eel` to
-demonstrate that.
+demonstrate that. Additionally, operations like `+=`, `*=`, etc are also supported by `eel`.
 
 Similarly to C and Javascript, the ternary operator works as expected; next snippet exemplifies:
 
