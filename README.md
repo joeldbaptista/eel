@@ -39,6 +39,17 @@ To run an example, do:
 $ lua input.lua examples/<example>.eel
 ```
 
+The project is composed by the following files
+
+1. `parser.lua` - the parser for `eel`
+2. `nodes.lua` - an ancilary module for the parser
+3. `compiler.lua` - the compiler for `eel`
+4. `machine.lua` - the "virtual machine" that executes the compiled code
+5. `stack.lua` - an ancilary module for stack operations
+6. `pt.lua` - an ancilary module to print tables (provided as courseware)
+
+With exception of `pt.lua`, all files were written by me.
+
 ## Syntax and features
 
 ### General view and syntax
