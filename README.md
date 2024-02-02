@@ -10,6 +10,7 @@ and scope rules.
 For a quick view of the language, explore the folder `examples`. There several examples of scripts can be found.
 In particular:
 
+0. `hello.eel` -- example with `print`
 1. `binsearch.eel` -- example using binary search
 2. `derivative.eel` -- example of derivative calculation with lambdas and closures
 3. `euclid.eel` -- example of the Euclid algorithms for the calculation of the greatest-common divisor
@@ -207,8 +208,6 @@ if (n & 1) {
 print('This is an error; there are not single-quotes in eel');
 ```
 
-Finally, boolean values, `true` and `false`, are recognised, and they behave as `1` and `0` respectively. 
-
 ### Comments
 
 Comments in `eel` are similar to C99. That is:
@@ -225,6 +224,25 @@ Comments in `eel` are similar to C99. That is:
 */
 
 ```
+
+### Numbers, strings and booleans
+
+Numbers in `eel` are floating point; they can be represented without decimal point (e.g. `123`), with decimal point (e.g. `123.456`),
+using E-notation (e.g. `1.234e-10` or `1.234E-10`), or with the hexadecimal notation (e.g `0xA29F`).
+
+Currently, strings have a diminute role, and are reduced to be used with `print`; for example (`examples/hello.eel`):
+
+```javascript
+main() {
+    let name = "eel", favnum = 42;
+
+    print("Hello world!");
+    print("My name is %s", name);
+    print("My favourite number is %s", favnum);
+}
+```
+
+Finally, boolean values, `true` and `false`, are recognised, and they behave as `1` and `0` respectively. 
 
 ### Declaration statements
 
@@ -465,6 +483,6 @@ Due to time unavailability I was not able to implement the following features th
 | Language criteria             | Score      | Comment
 |-------------------------------|------------|------------
 | Language Completeness | 3 | More then one challenge implemented                                                                          |
-| Code Quality & Report | 3 | Code is organized in components for modular development                                                      |
+| Code Quality & Report | 3 | Code is organized in components for modular development, although it requires a bit of refactoring.          |
 | Originality & Scope   | 3 | The current implementation deviates considerably from Selene, and combines functional & procedural paradigms |
 | Self assesment        | 2 | I feel the conceptual aspects of PEGs is not yet solidified in my mind                                       |
