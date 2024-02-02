@@ -390,7 +390,8 @@ main() {
 ### Function values (`funval`)
 
 Function values (or `funval`) are functions that can be assigned to variables, and thus can be used for lambdas
-functions or for closures. The example `derivatives.eel` exemplify the use of closures and lambdas:
+functions or for closures. Currently, `funval` does not accept default parameters. The example `derivatives.eel` 
+exemplify the use of closures and lambdas:
 
 ```Javascript
 
