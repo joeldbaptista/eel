@@ -1,0 +1,17 @@
+
+foo(aa, bb)
+{
+    let a = 1;
+    {
+        let b = 2;
+        {
+            let a = 3;
+        }
+    }
+    return a;
+}
+
+main()
+{
+    print("foo(1,2) = %s", foo(1,2));
+}

@@ -1,0 +1,11 @@
+
+main()
+{
+    let x = 10;
+    const f = (x) { 
+        let x = 100;
+        return x**2; 
+    };
+    let a = 11;
+    print("f(%s) = %s", a, f(a));
+}
