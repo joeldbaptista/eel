@@ -1,0 +1,8 @@
+main() {
+	print("!true = %s", !true ? "true": "false");
+	print("!false = %s", !false ? "true": "false");
+	print("true && false = %s", true && false ? "true": "false");
+	print("true && !false = %s", true && !false ? "true": "false");
+	print("true || false = %s", true || false ? "true": "false");
+	print("true || !false = %s", true || !false ? "true": "false");
+}
