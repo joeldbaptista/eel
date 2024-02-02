@@ -4,8 +4,8 @@
 
 This language's name is `eel`, and E, E, L, does not stand for anything in particular. Briefly, the goal
 was to develop a language in the C-family style, and with some extras that will be detailed in the next sections.
-Also, by design, `eel` is stricter than what is expected from a scripting language, due to strict declaration rules 
-and scope (see section [Scopes](## Scopes)).
+Also, by design, `eel` is stricter than what is expected from a scripting language, due to strict declaration
+and scope rules.
 
 For a quick view of the language, explore the folder `examples`. There several examples of scripts can be found.
 In particular:
@@ -33,10 +33,10 @@ $ lua eel.lua examples/<example>.eel
 
 ### General view and syntax
 
-A script in `eel.` is a list of functions, where one has to be named `main`, containing no argumments.
+A script in `eel` is a list of functions, where one has to be named `main`, containing no argumments.
 
 Syntax is similar to that of C, and other C-family members. So expressions like `++x` or `y += x` are expected. 
-The operators also behave like those of C, including the bitwise operators and module that have the same precedence 
+The operators also behave like those of C, including the bitwise operators and modulo, and have the same precedence 
 rules as in C. 
 
 So expressions as those that follow are supported:
@@ -57,7 +57,7 @@ x != 1 || y >= 10   // boolean or
 !(x == 1)           // boolean not
 ```
 
-The boolean operators operate in short-circuit; thus, in the following example, the calculate `1/x` is not performed:
+The boolean operators operate in short-circuit; thus, in the following example, `1/x` is not calculated:
 
 ```javascript
 let x = 0;
@@ -68,7 +68,7 @@ print("Will this crash?", x != 0 && 1/x);
 A word about prefix/postfix notation. The operator `++` and `--` work as in C, that is: `foo(++x)` will increment `x` and apply `foo`
 over the incremented `x`; but `foo(x++)` will apply `foo` over `x`, and only then increment `x`.
 
-Similarly to C and Javascript, the ternary operator works as expected; next snippeted exemplifies:
+Similarly to C and Javascript, the ternary operator works as expected; next snippet exemplifies:
 
 ```Javascript
 let x = -42;
@@ -109,27 +109,32 @@ while (true) {
 Like C, `eel` also supports `break` and `continue`. Thus, the following example will just add up to `k == 5`:
 
 ```Javascript
+main()
+{
+	let s = 0, k;
 
-// code ommitted
-
-for (k = 0; k < 10; ++k) {
-    if (k > 5) break;
-    s += k**2;
+	for (k = 0; k < 10; ++k) {
+		if (k > 5) break;
+		s += k;
+	}
+	print("s = %s %s", s, k);
 }
-
 ```
 
 And the next example will just add even numbers:
 
 ```Javascript
+main()
+{
+	let s = 0;
 
-// code ommitted
-
-for (k = 0; k < 10; ++k) {
-    if (k & 1) continue;
-    s += k;
+	for (let k = 0; k < 10; ++k) {
+		if (k & 1) continue;
+		print("k = %s", k);
+		s += k;
+	}
+	print("s = %s", s);
 }
-
 ```
 
 There are however differences. The most noticibly is `unless` control structure, that does not exist in the C family. 
@@ -149,26 +154,43 @@ unless (x == 0) {
 
 The power operator, `**`, is another difference in comparison with C-like languages. For example, `x**2` will square `x`. 
 
-The switch control structure is also slightly different. For example:
+The switch control structure is also slightly different. Example `examples/switch.eel` demonstrates that:
 
 ```Javascript
+switch_me(x)
+{
+	let a = 0;
 
-switch (x) {
-case 1:
-    print("x == 1");
-case 2:
-    print("x == 2");
-case 3:
-    print("x == 3");
-default:
-    print("x is neither 1, 2, nor 3");
+	switch (x) {
+	case 1:
+		a = 100;
+	case 2:
+		a = 200;
+	default:
+		a = 300;
+	}
+	return a;
 }
 
+main()
+{
+	print("x = 1, a = %s", switch_me(1));
+	print("x = 2, a = %s", switch_me(2));
+	print("x = 3, a = %s", switch_me(3));
+
+	/*
+        will print
+
+        x = 1, a = 100
+        x = 2, a = 200
+        x = 3, a = 300
+	*/
+}
 ```
+
 The switch-case control structures does not require break. The moment a case is matched, the body of the case is executed,
 and once it gets to the end of the case, it will terminate the switch-case. If neither cases match, the default will be run. 
-If no default exists, the switch terminates. 
-
+If no default exists, the switch terminates.
 
 Like C, Strings are defined using double quotes only, but single quotes are not recognized in the current version of the language, 
 for example:
@@ -181,7 +203,7 @@ if (n & 1) {
 print('This is an error; there are not single-quotes in eel');
 ```
 
-Finally, boolean values (`true` and `false`) are recognized, and they behave as `1` and `0` respectively. 
+Finally, boolean values, `true` and `false`, are recognised, and they behave as `1` and `0` respectively. 
 
 ### Comments
 
@@ -234,19 +256,20 @@ let t = [];     // this is a list; it can grown "indefinitely"
 Bounding checks are applied to size defined arrays; that is, requesting data outside the predefined dimensions
 will yield an run-time error.
 
-Indices in list and arrays are start at zero. For example:
+Indices in list and arrays start at zero. For example:
 
 ```Javascript
 main()
 {
-    let r[10, 10];
+    let r[10,10];
+
     for (let i=0; i < 10; ++i) {
         for (let j=i; j < 10; ++j) {
             if (i == j) {
-                r[i, j] = i;
+                r[i,j] = i;
             } else {
-                r[i, j] = i + j;
-                r[j, i] = i + j;
+                r[i,j] = i + j;
+                r[j,i] = i + j;
             }
         }
     }
@@ -254,7 +277,7 @@ main()
 }
 ```
 
-The lenght of a list can be infered with the operator `#` as in lua; that is:
+The length of a list can be infered with the operator `#` as in lua; that is:
 
 ```Javascript
 main() 
@@ -283,8 +306,22 @@ for (let k=0; k < 100; ++k)
 
 ### Function calls and recursion
 
-Functions are defined and utilised as in C and C-like languages. The example, `euclid.eel` shows how a function 
-is defined and called:
+Functions are defined and utilised as in C and C-like languages. A noticible difference is that in `eel` the last parameter
+can be optional, thus the following snippet is possible:
+
+```javascript
+foo(a, b = 10) {
+    return a + b;
+}
+
+main()
+{
+    print("foo(10) = %s", foo(10)); // prints foo(10) = 20
+}
+
+```
+
+The example, `euclid.eel` shows a more complex use of functions in `eel`.
 
 ```javascript
 gcd(a, b) {
@@ -304,7 +341,7 @@ main() {
 ```
 
 The current implementation allows recursion, without forward declaration; the examples `factorial.eel` and `fibonacci.eel` 
-show how recursion is used in `eel`.
+show how recursion is used in `eel`; for `fibonacci.eel`:
 
 ```javascript
 fibo(n) {
@@ -381,20 +418,21 @@ main()
 
 ```
 
-This rule however is not applied to lambdas where shadowing is applied; for example:
+This is implemented in the following way: 
 
-```javascript
-main()
-{
-    let x = 10;
-    const f = (x) { 
-        let x = 100;
-        return x**2; 
-    };
-    let a = 11;
-    print("f(%s) = %s", a, f(a));  // prints "f(11) = 10000.0"
-}
-```
+After building the AST, the final stage of the parser consists in traversing the 
+tree, labelling the blocks. The labels of the blocks are encode their nested relation. For example, a function block is level
+1, and an immediate sub-block is 1.1. A list relating the scope and the variable is maintained by the compiler when is
+compiling a function. This list is discarded after compilation. 
+
+When a variable is declared, in the compilation of the declaration, the scope where the declaration happens is extracted, and
+the compiler first checks if there's a variable with the same name at the same scope. If so, a compilation error is issued. 
+If not, the compiler iterates over the list of scopes, effectively covering the chain of nested scopes. That is, if the variable
+is declared in scope 1.2.3, the compiler first searches in scope 1, and then in scope 1.2. If at any point the a variable 
+with the same name is found, an error is issued. If not, the variable is created. 
+
+Scripts `examples/redeclaration.eel`, `examples/undeclared.eel` and `examples/lambda_scopes.eel` exemplify the errors 
+that occured in both situations.
 
 ## Future work
 
@@ -412,4 +450,4 @@ Due to time unavailability I was not able to implement the following features th
 | Language Completeness | 3 | More then one challenge implemented                                                                       |
 | Code Quality & Report | 3 | Code is organized in components for modular development                                                   |
 | Originality & Scope   | 3 | The current implementation deviates from Selene, and combines functional & procedural paradigms           |
-| Self assesment        | 2 | I feel like the conceptual aspects of PEGs is not yet solidified in my mind                               |
+| Self assesment        | 2 | I feel the conceptual aspects of PEGs is not yet solidified in my mind                               |

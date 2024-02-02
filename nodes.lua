@@ -101,6 +101,9 @@ local lut = {
     ["if"] = function(s)
         return { tag="if", cond=s[1], thn=s[2], els=s[3] }
     end,
+    ["unless"] = function(s)
+        return { tag="unless", cond=s[1], thn=s[2], els=s[3] }
+    end,
     ["while"] = function(s)
         return { tag="while", cond=s[1], body=s[2] }
     end,
@@ -115,10 +118,10 @@ local lut = {
         return { tag="do", body=s[1], cond=s[2] }
     end,
     ["default"] = function(s)
-	    return { tag="default", seq=s[1] }
+	    return { tag="default", stmts=s[1] }
     end,
     ["case"] = function(s)
-	    return { tag="case", expr=s[1], seq=s[2] }
+	    return { tag="case", expr=s[1], stmts=s[2] }
     end,
     ["switch"] = function(s)
         local cases = {}

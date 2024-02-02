@@ -1,0 +1,14 @@
+/*
+	Exemplifies continue
+*/
+main()
+{
+	let s = 0;
+
+	for (let k = 0; k < 10; ++k) {
+		if (k & 1) continue;
+		print("k = %s", k);
+		s += k;
+	}
+	print("s = %s", s);
+}

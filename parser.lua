@@ -56,7 +56,7 @@ local str = dquote * TC((nescchar + escseq)^0) * dquote
 
 -- Reserved words
 local reserved = {
-    "if", "else", "while", "do", "for", "return", "function", 
+    "if", "else", "unless", "while", "do", "for", "return", "function", 
     "let", "const", "break", "continue", "true", "false", "switch",
     "case", "default", "print"
 }
@@ -117,6 +117,7 @@ local funcall = lpeg.V"funcall"
 local args = lpeg.V"args"
 
 local ifstmt = lpeg.V"ifstmt"
+local unlessstmt = lpeg.V"unlessstmt"
 local whlstmt = lpeg.V"whlstmt"
 local dostmt = lpeg.V"dostmt"
 local forstmt = lpeg.V"forstmt"
@@ -173,6 +174,7 @@ local grammar = lpeg.P {
          + brkstmt
          + cntstmt
          + ifstmt
+         + unlessstmt
          + whlstmt
          + dostmt
          + forstmt
@@ -220,13 +222,14 @@ local grammar = lpeg.P {
 
     -- Control structures
     ifstmt = lpeg.Ct(Rw"if" * T"(" * expr * T")" * stmt * (Rw"else" * stmt)^-1) / node("if"),
+    unlessstmt = lpeg.Ct(Rw"unless" * T"(" * expr * T")" * stmt * (Rw"else" * stmt)^-1) / node("unless"),
     
     whlstmt = lpeg.Ct(Rw"while" * T"(" * expr * T")" * stmt) / node("while"),
     dostmt = lpeg.Ct(Rw"do" * stmt * Rw"while" * T"(" * expr * T")") * T";" / node("do"),
 
     forstmt = lpeg.Ct(
-        Rw"for" * T"(" * (lpeg.C(strt) + lpeg.Cc(""))* T";" * 
-            (lpeg.C(expr) + lpeg.Cc("")) * T";" * (lpeg.C(itrt) + lpeg.Cc("")) * T")" * stmt
+        Rw"for" * T"(" * (strt + lpeg.Cc(""))* T";" * 
+            (expr + lpeg.Cc("")) * T";" * (itrt + lpeg.Cc("")) * T")" * stmt
     ) / node("for"),
     strt = declr + assgn,
     itrt = assgn,
@@ -260,7 +263,7 @@ local grammar = lpeg.P {
 	     + lpeg.Ct(auop * aexp) / node("unary"),
 	mexp = lpeg.Ct(pexp * (pbop * pexp)^0) / node("binop"),
 
-    pexp = bool + number + pfex + idxelm + funcall + var + T"(" * expr * T")",
+    pexp = asize + bool + number + pfex + idxelm + funcall + var + T"(" * expr * T")",
     pfex = lpeg.Ct(pfop * var + var * pfop) / node("pfix"),
 
     -- Misc
@@ -291,7 +294,6 @@ local function setup_scopes(tbl, p, force_in)
 		local ns = sibs[p]
 		np = p == "" and tostring(sibs[p]) or p.."."..sibs[p]
 		tbl.scope = np
-		-- TODO refactor this
 		-- iterate over its elements and recursively setup scopes
 		for k,v in pairs(tbl.stmts) do
 			v.scope = np 
@@ -324,10 +326,20 @@ local function setup_scopes(tbl, p, force_in)
 		end
 		return
 	end
+    if tbl.tag == "unless" then
+		setup_scopes(tbl.thn, p)	
+		if tbl.els then
+			setup_scopes(tbl.els, p)
+		end
+		return
+	end
 	if tbl.tag == "for" then
 		setup_scopes(tbl.body, p)
 		if tbl.strt then
-		setup_scopes(tbl.strt, tbl.body.scope)	
+		    setup_scopes(tbl.strt, tbl.body.scope)	
+		end
+		if tbl.itrt then
+		    setup_scopes(tbl.itrt, tbl.body.scope)	
 		end
 		return
 	end
@@ -360,7 +372,6 @@ return {
     parse = function(input)
         local ast = grammar:match(input) 
         if ast then
-            print(pt.pt(ast))
             for k = 1, #ast do
                 local fn = ast[k]
                 setup_scopes(fn, "")

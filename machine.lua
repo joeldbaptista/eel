@@ -1,12 +1,21 @@
 local pt = require "pt"
 
+local function xerror(...)
+    error(string.format(...))
+end
+
 --
 local bop = {
     -- Arithmetic
     ["add"] = function(a, b) return a + b end,
     ["sub"] = function(a, b) return a - b end,
     ["mul"] = function(a, b) return a * b end,
-    ["div"] = function(a, b) return a / b end,
+    ["div"] = function(a, b) 
+        if (b == 0) then 
+            xerror("Division by zero not allowed") 
+        end
+        return a / b 
+    end,
     ["mod"] = function(a, b) return a % b end,
     ["pow"] = function(a, b) return a ^ b end,
 
@@ -68,7 +77,7 @@ local function prntarr(arr, l)
         if type(val) == "table" then
             if key ~= "sizes" then
                  print(indent .. tostring(key) .. ": ")
-                prntarr(val, l + 1)
+                 prntarr(val, l + 1)
             end
         else
             print(indent .. tostring(key) .. ": " .. tostring(val))
@@ -359,9 +368,18 @@ local function run(code, mem, stack, top)
             stack.push(e)
         elseif code[pc] == "gsz" then
             local e = stack.pop()
-            local s = {1} -- a number/scalar
+            local s = 1 -- a number/scalar
             if type(e) == "table" then
-                s = type(e.sizes) == "table" and e.sizes or #e
+                if e.sizes == -1 then
+                    s = 0
+                    for _ = 1, #e do
+                        s = s + 1
+                    end
+                else
+                    for k = 1, #e.sizes do
+                        s = s * e.sizes[k]
+                    end
+                end
             end
             stack.push(s)
 

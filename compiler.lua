@@ -461,29 +461,30 @@ end
 --------------------------------------------------------------
 
 function compiler:chckidvar(bid, id)
-	local vars = self.blkvars[bid] -- vars in scope
+	local vars = self.blkvars[bid]
+	-- check if there's a match in current scope
+	-- if so, send error
 	if vars then
 		local v = vars[id]
 		if v then
 			cerror("Redeclaration of variable `%s` at scope level (%s)", id, bid)
 		end
-		-- check variables in scope chain
-		local bv = self.blkvars
-		for key, val in pairs(bv) do
-			local issubstr = string.find(bid, key) ~= nil
-			if issubstr and bid ~= key then
-				local w = val[id]
-				if w then
-					cerror("Redeclaration of variable `%s` at scope level (%s vs %s)", id, bid, key)
-				end
+	end
+	-- check variables in scope chain
+	-- if so, send error
+	local bv = self.blkvars
+	for key, val in pairs(bv) do
+		local issubstr = string.find(bid, key) ~= nil
+		if issubstr and bid ~= key then
+			local w = val[id]
+			if w then
+				cerror("Redeclaration of variable `%s` at scope level (%s vs %s)", id, bid, key)
 			end
 		end
-		-- new variable
-		vars[id] = 1
-	else
-		self.blkvars[bid] = self.blkvars[bid] and self.blkvars[bid] or {}
-		self.blkvars[bid][id] = 1 -- let
-	end 
+	end
+	-- a new variable is created
+	self.blkvars[bid] = self.blkvars[bid] and self.blkvars[bid] or {}
+	self.blkvars[bid][id] = 1 -- assume non-constant
 end
 
 
@@ -492,7 +493,18 @@ function compiler:setconst(bid, id)
 end
 
 function compiler:isconst(bid, id)
-	return self.blkvars[bid][id] == 2
+	local vars = self.blkvars
+	for k, v in pairs(vars) do
+		local issubstr = string.find(bid, k) ~= nil
+		if issubstr then
+			for kk, vv in pairs(v) do
+				if kk == id then
+					return vv == 2
+				end
+			end
+		end
+	end
+	cerror("Could not assess `%s` for read-only property", id)
 end
 
 function compiler:cdeclr(ast)
@@ -521,8 +533,8 @@ function compiler:cdeclr(ast)
             end
         else -- if s.var.tag == "var"
             local id = s.var.id
-            self:chckidvar(bid, id)
             local rhs = s.rhs
+            self:chckidvar(bid, id)
             local o = self:getidx(id, true)
             local idx = o.idx
             local st = o.st
@@ -553,10 +565,10 @@ function compiler:cassgn(ast)
         if s.tag == "pfix" then
             -- it does not matter if the op is pre or post
             local id = s.id
+			local o = self:getidx(id)
 			if self:isconst(scp, id) then
 				cerror("Variable `%s` is read-only", id)
             end
-            local o = self:getidx(id)
             local idx = o.idx
             local ld = o.ld
             local st = o.st
@@ -568,11 +580,11 @@ function compiler:cassgn(ast)
         elseif s.lhs.tag == "indexed" then
             local rhs = s.rhs
             local id = s.lhs.var.id
-            if self:isconst(scp, id) then
-				cerror("Variable `%s` is read-only", id)
-            end
             local sizes = s.lhs.sizes
             local o = self:getidx(id)
+			if self:isconst(scp, id) then
+				cerror("Variable `%s` is read-only", id)
+            end
             local idx = o.idx
             local ld = o.ld
             local st = o.st
@@ -605,12 +617,12 @@ function compiler:cassgn(ast)
         ]]--
         else -- variable
             local id = s.lhs.id
+			local lhs = s.lhs
+            local rhs = s.rhs
+            local o = self:getidx(id)
 			if self:isconst(scp, id) then
 				cerror("Variable `%s` is read-only", id)
             end
-            local lhs = s.lhs
-            local rhs = s.rhs
-            local o = self:getidx(id)
             local idx = o.idx
             local st = o.st
             if op == "=" then
@@ -684,6 +696,20 @@ function compiler:cstmt(ast)
         end
         return
     end
+	if ast.tag == "unless" then
+        self:cexpr(ast.cond)
+        local f = self:jmpfwd("jz")
+        self:cstmt(ast.els)
+        if ast.els then
+            local t = self:jmpfwd("jmp")
+            self:jmphere(f)
+            self:cstmt(ast.thn)
+            self:jmphere(t)
+        else
+            self:jmphere(f)
+        end
+        return
+    end
     if ast.tag == "while" then
         local bow = self:cpos()
         self:cexpr(ast.cond)
@@ -744,16 +770,16 @@ function compiler:cstmt(ast)
                 self:cexpr(case.expr)
                 self:addop("eq")
                 local eoc = self:jmpfwd("jz") -- end of case
-                for i = 1, #case.seq do
-                    self:cstmt(case.seq[i])
+                for i = 1, #case.stmts do
+                    self:cstmt(case.stmts[i])
                 end
                 local eos = self:jmpfwd("jmp") -- end of switch
                 s.push(eos)
                 self:jmphere(eoc)
             else
                 -- default block
-                for i = 1, #case.seq do
-                    self:cstmt(case.seq[i])
+                for i = 1, #case.stmts do
+                    self:cstmt(case.stmts[i])
                 end
             end
         end
