@@ -487,3 +487,11 @@ Due to time unavailability I was not able to implement the following features th
 | Code Quality & Report | 3 | Code is organized in components for modular development, although it requires a bit of refactoring.          |
 | Originality & Scope   | 3 | The current implementation deviates considerably from Selene, and combines functional & procedural paradigms |
 | Self assesment        | 2 | I feel the conceptual aspects of PEGs is not yet solidified in my mind                                       |
+
+
+## References
+
+I haven't used any other references beyond those provided during the course.
+
+
+
