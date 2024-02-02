@@ -36,7 +36,7 @@ In particular:
 To run an example, do:
 
 ```shell
-$ lua eel.lua examples/<example>.eel
+$ lua input.lua examples/<example>.eel
 ```
 
 ## Syntax and features
