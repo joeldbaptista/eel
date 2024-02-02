@@ -1,4 +1,4 @@
-# EEL
+# Final Project Report: EEL
 
 ## Introduction
 
