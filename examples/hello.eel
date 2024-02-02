@@ -1,0 +1,7 @@
+main() {
+    let name = "eel", favnum = 42;
+
+    print("Hello world!");
+    print("My name is %s", name);
+    print("My favourite number is %s", favnum);
+}
