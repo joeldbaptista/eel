@@ -32,6 +32,7 @@ In particular:
 19. `redeclaration.eel` -- example of redeclaration error (will issue an error on purpose)
 20. `switch.eel` -- example of switch works in `eel` 
 21. `undeclared.eel` -- example of undeclared variable error (will issue an error on purpose)
+22. `unless.eel` -- example of `unless` control structure
 
 To run an example, do:
 
