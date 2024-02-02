@@ -382,7 +382,7 @@ function compiler:cexpr(ast)
 		-- logic `or` implementation with jumps
 		if bops[ast.op] == "lor" then
 			self:cexpr(ast.lop)
-			local jmp = self:jmpfwd("jznp")
+			local jmp = self:jmpfwd("jnzp")
 			self:cexpr(ast.rop)
 			self:jmphere(jmp)
 			return

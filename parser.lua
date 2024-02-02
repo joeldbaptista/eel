@@ -8,7 +8,7 @@ local function I(msg)
     return lpeg.P(function() print(msg); return true end)
 end
 
-
+--
 local function syntax_error(input, max)
     local _, line = string.gsub(string.sub(input, 1, max), "\n", "")
     line = line + 1
@@ -139,6 +139,7 @@ local mexp = lpeg.V"mexp"  -- multiplicative expression
 local pexp = lpeg.V"pexp"  -- power expression, for **
 local texp = lpeg.V"texp"  -- ternary expression
 local pfex = lpeg.V"pfex"  -- prefix/postfix expression
+local unop = lpeg.V"unop"  -- unary operations
 
 local ID = lpeg.V"ID"
 local var = lpeg.V"var"
@@ -255,19 +256,19 @@ local grammar = lpeg.P {
     expr = texp + bexp,
 
 	texp = lpeg.Ct(bexp * T"?" * bexp * T":" * bexp) / node("ternary"),
-	bexp = lpeg.Ct(lexp * (lbop * lexp)^0) / node("binop") 
-	     + lpeg.Ct(luop * lexp) / node("unary") + bool,
+	bexp = lpeg.Ct(lexp * (lbop * lexp)^0) / node("binop"),
+
 	lexp = lpeg.Ct(cexp * (cop * cexp)^-1) / node("binop"),
 	cexp = lpeg.Ct(aexp * (abop * aexp)^0) / node("binop"),
-	aexp = lpeg.Ct(mexp * (mbop * mexp)^0) / node("binop") 
-	     + lpeg.Ct(auop * aexp) / node("unary"),
+	aexp = lpeg.Ct(mexp * (mbop * mexp)^0) / node("binop"),
 	mexp = lpeg.Ct(pexp * (pbop * pexp)^0) / node("binop"),
 
-    pexp = asize + bool + number + pfex + idxelm + funcall + var + T"(" * expr * T")",
+    pexp = asize + bool + number + string + pfex + unop + idxelm + funcall + var + T"(" * expr * T")",
+    unop = lpeg.Ct(luop * pexp) / node("unary") + lpeg.Ct(auop * pexp) / node("unary"),
     pfex = lpeg.Ct(pfop * var + var * pfop) / node("pfix"),
 
     -- Misc
-    bool = lpeg.C(Rw"true" + Rw"false") / node("boolean"),
+    bool = (Rw("true", 1) + Rw("false", 1)) / node("boolean"),
     string = str / node("string"),
     number = num / node("number"),
     var = ID / node("variable"),

@@ -5,6 +5,11 @@ local c = require "compiler"
 local m = require "machine"
 
 --
+local function err(...)
+    error(string.format(...))
+end
+
+--
 local function read_src(fname)
     local file, error = io.open(fname, "r")
     if not file then
@@ -24,10 +29,12 @@ local function eel(fname)
 	--
 	local src = read_src(fname)
 	local ast = p.parse(src)
-	local asm = c.compile(ast)
-	m.run(asm, mem, stack, top)
-	-- 
-	return stack.top()
+	if ast then
+        local asm = c.compile(ast)
+        m.run(asm, mem, stack, top)
+        return stack.top()
+	end
+	err("Could not parse source")
 end
 
 --

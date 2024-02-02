@@ -44,7 +44,7 @@ local uop = {
     ["bnot"] = function(a) return ~a  end,
     ["inc"]  = function(a) return a+1 end,
     ["dec"]  = function(a) return a-1 end,
-    ["lnot"] = function(a) return a ~= 0 and 1 or 0  end,
+    ["lnot"] = function(a) return a == 0 and 1 or 0 end,
 }
 
 local function binop(stack, op)
@@ -56,17 +56,18 @@ local function binop(stack, op)
         stack.push(e)
         return
     end
-    error(string.format("Unknown instruction `%s`", op))
+    xerror("Unknown instruction `%s`", op)
 end
 
 local function unop(stack, op)
+    -- TODO no need to pop & push back;
     local o = stack.pop()
     if uop[op] then
         local e = uop[op](o)
         stack.push(e)
         return
     end
-    error(string.format("Unknown instruction `%s`", op))
+    xerror("Unknown instruction `%s`", op)
 end
 
 -- Ancillary function to print arrays
@@ -188,20 +189,20 @@ local function run(code, mem, stack, top)
         elseif code[pc] == "jzp" then
             pc = pc + 1
             local o = stack.top()
-            if o == 0 or not o then
+            if o == 0 then
                 pc = pc + code[pc]
             else
                 -- do nothing with it
                 o = stack.pop()
             end
-        elseif code[pc] == "jznp" then
+        elseif code[pc] == "jnzp" then
             pc = pc + 1
             local o = stack.top()
-            if o == 0 or not o then
+            if o ~= 0 then
+                pc = pc + code[pc]
+            else
                 -- do nothing with it
                 o = stack.pop()
-            else
-                pc = pc + code[pc]
             end
         elseif code[pc] == "jmp" then
             pc = pc + 1
@@ -396,7 +397,6 @@ local function run(code, mem, stack, top)
             for k = 1, argc do
                 args[k] = stack.pop()
             end
-            --frmt = string.sub(frmt, 2, -2) -- remove the extra quotes
             print(string.format(frmt, table.unpack(args)))
         elseif code[pc] == "atprt" then
             local e = stack.pop()
